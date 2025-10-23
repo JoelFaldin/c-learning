@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define BSIZE 256
 
@@ -10,13 +11,13 @@ int main()
     FILE *fp;
     char buffer[BSIZE];
     char *r, *entry;
-    int items, x;
+    int items, saying;
     char **list_base;
 
     fp = fopen(filename, "r");
 
     if (fp == NULL) {
-        fprintf(stderr,"Unable to open file %s\n",filename);
+        fprintf(stderr, "Unable to open file %s\n", filename);
         exit(1);
     }
 
@@ -53,8 +54,13 @@ int main()
 
     fclose(fp);
 
+    srand((unsigned int) time(NULL));
+    saying = rand() % items;
+
+    printf("%s", *(list_base + saying));
+
+    int x;
     for (x = 0; x < items; x++) {
-        printf("%s", list_base[x]);
         free(list_base[x]);
     }
 

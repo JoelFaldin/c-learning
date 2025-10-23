@@ -31,7 +31,8 @@ int main(int argc, char *argv[])
         }
     
         if (argc > 1) {
-            printf(", %s!", argv[1]);
+            printf(", %s!\n", argv[1]);
+            printf("%s", (argc > 2) ? argv[2] : "");
         } else {
             printf(", bro!");
         }

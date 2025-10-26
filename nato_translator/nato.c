@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <ctype.h>
 
-int main() {
+int main(int argc, char *argv[]) {
     const char *nato[] = {
         "Alfa", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot",
         "Golf", "Hotel", "India", "Juliett", "Kilo", "Lima",
@@ -10,28 +10,30 @@ int main() {
         "Xray", "Yankee", "Zulu"
     };
 
-    char phrase[64];
-    char ch;
-    int i;
+    FILE *f;
+    int ch;
 
-    printf("Enter a phrase: ");
-    fgets(phrase, 64, stdin);
+    if (argc < 2) {
+        fprintf(stderr, "You should add a file as argument\n");
+        return 1;
+    }
 
-    i = 0;
-    while (phrase[i]) {
-        ch = toupper(phrase[i]);
+    f = fopen(argv[1], "r");
 
-        if (!isalpha(ch)) {
-            printf("%s", nato[ch - 'A']);
-            i++;
+    if (f == NULL) {
+        fprintf(stderr, "Error opening file\n");
+        return 1;
+    }
 
-            if (i == 64) {
-                break;
-            }
+    while ((ch = fgetc(f)) != EOF) {
+        if (isalpha(ch)) {
+            printf("%s ", nato[toupper(ch) - 'A']);
         }
     }
 
     putchar('\n');
+
+    fclose(f);
 
     return 0;
 }

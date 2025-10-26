@@ -36,3 +36,20 @@ echo "Hello, Caesar!" | ./caesar02 | ./caesar03
 ```
 
 Result: `Hello, Caesar!`
+
+4. With shift values provided:
+
+```
+cc caesar/caesar04.c
+./a.out A R
+this is a test
+```
+
+Result: `cqrb rb j cnbc`
+
+```
+./a.out R A
+cqrb rb j cnbc
+```
+
+Result: `this is a test`

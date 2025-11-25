@@ -7,7 +7,7 @@
 
 int main() {
     char line[LENGTH];
-    int x, ch;
+    int x, ch, hex;
 
     char *r;
 
@@ -32,7 +32,13 @@ int main() {
 
             if (strncmp(line, "HEX ENCODE END", 13) == 0) break;
             
-            printf("%s\n", line);
+            r = strtok(line, " ");
+            while (r) {
+                sscanf(r, "%02X", &hex);
+                printf("%c", hex);
+                r = strtok(NULL, " ");
+            }
+
             x = 0;
         }
     }

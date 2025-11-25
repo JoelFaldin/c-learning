@@ -59,3 +59,33 @@ cc encoding_decoding/tohex.c
 ```
 
 Result: `test`
+
+5. Formated hex encoder
+
+```
+cc encoding_decoding/hexencode.c
+echo "Hello world" | ./a.out
+```
+
+Result:
+```
+HEX ENCODE
+ 48 65 6C 6C 6F 20 77 6F 72 6C 64 0A
+HEX ENCODE END
+```
+
+6. Hex decoder
+
+```
+cc encoding_decoding/hexencode.c
+echo "Hello world" | ./a.out > encoding_decoding/sample.txt
+```
+
+(Remember to create the file sample.txt before running that command!)
+
+```
+cc encoding_decoding/hexdecode.c
+./a.out < encoding_decoding/sample.txt
+```
+
+Result: ` 48 65 6C 6C 6F 20 77 6F 72 6C 64 0A`

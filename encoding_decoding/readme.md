@@ -89,3 +89,13 @@ cc encoding_decoding/hexdecode.c
 ```
 
 Result: `Hello world`
+
+7. URL encoder
+
+```
+cc encoding_decoding/urlencoder.c
+./a.out
+https:/ /c-for-dummies.com/blog/
+```
+
+Result: `https%3A%2F+%2Fc-for-dummies.com%2Fblog%2F%0A`

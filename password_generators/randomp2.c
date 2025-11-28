@@ -9,28 +9,38 @@
 
 char uppercase();
 char lowercase();
-int number();
+char number();
 char symbol();
+void scramble(char p[]);
 
 int main() {
     srand((unsigned)time(NULL));
 
-    char password[10];
+    char password[UPPER + LOWER + NUM + SYM + 1];
+    int x;
 
     password[0] = uppercase();
 
-    for (int i = 1; i <= LOWER; i++) {
-        password[i] = lowercase();
+    while(x < UPPER) {
+        password[x] = uppercase();
+        x++;
+    }
+    while(x < UPPER + LOWER) {
+        password[x] = lowercase();
+        x++;
+    }
+    while(x < UPPER + LOWER + NUM) {
+        password[x] = number();
+        x++;
+    }
+    while(x < UPPER + LOWER + NUM + SYM) {
+        password[x] = symbol();
+        x++;
     }
 
-    char ch;
-    sprintf(&ch, "%d", number());    
-    
-    password[7] = ch;
-    
-    for (int j = 8; j < SYM + 8; j++) {
-        password[j] = symbol();
-    }
+    password[x] = '\0';
+
+    scramble(password);
 
     printf("Final password: %s\n", password);
 
@@ -53,12 +63,15 @@ char lowercase() {
     return ch;
 }
 
-int number() {
-    int num;
+char number() {
+    char ch;
 
     // Range: 0 to 9:
-    num = rand() % (9 - 0 + 1) + 0;
-    return num;
+    ch = rand() % (9 - 0 + 1) + 0;
+
+    char n;
+    sprintf(&n, "%d", ch); 
+    return n;
 }
 
 char symbol() {
@@ -70,4 +83,27 @@ char symbol() {
     num = rand() % (7 - 0 + 1) + 0;
     ch = symbols[num];
     return ch;
+}
+
+void scramble(char p[]) {
+    const int size = UPPER + LOWER + NUM + SYM + 1;
+    char key[size];
+    int x, r;
+
+    for (x = 0; x < size; x++) {
+        key[x] = '\0';
+    }
+
+    x = 0;
+    while (x < size - 1) {
+        r = rand() % (size - 1);
+        if (!key[r]) {
+            key[r] = p[x];
+            x++;
+        }
+    }
+
+    for (x = 0; x < size; x++) {
+        p[x] = key[x];
+    }
 }

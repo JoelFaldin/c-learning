@@ -12,7 +12,7 @@ int main() {
     }
 
     printf("Length: a = %lu b = %lu\n", strlen(a), strlen(b));
-    printf("Storage: a = % zu b = %zu\n", sizeof(a), sizeof(b));
+    printf("Storage: a = %zu b = %zu\n", sizeof(a), sizeof(b));
 
     return 0;
 }

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 void strupper(char *s) {
     while (*s) {
@@ -7,6 +8,26 @@ void strupper(char *s) {
         }
 
         s++;
+    }
+}
+
+void strlower(char *s) {
+    while (*s) {
+        if (*s >= 'A' && *s <= 'Z') {
+            *s += 32;
+        }
+
+        s++;
+    }
+}
+
+void strcaps(char *s) {
+    int len = strlen(s);
+
+    for (int i = 0; i < len; i++) {
+        if ((s[i - 1] == ' ' || i == 0) && ((s[i] >= 'a' && s[i] <= 'z') || (s[i] >= 'A' && s[i] <= 'Z'))) {
+            s[i] &= 0xdf;
+        }
     }
 }
 
@@ -19,5 +40,15 @@ int main() {
 
     printf("Uppercase string: %s\n", string);
 
+    strlower(string);
+
+    printf("Lowercase string: %s\n", string);
+
+    char new_string[] = "this is a sample string";
+
+    strcaps(new_string);
+
+    printf("Capitalized: %s\n", new_string);
+    
     return 0;
 }

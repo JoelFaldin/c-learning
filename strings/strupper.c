@@ -90,6 +90,7 @@ int main() {
     printf("Before: %s\n", new_string2);
     printf("After: %s\n", reversed_string);
 
+    free(reversed_string);
     
     return 0;
 }

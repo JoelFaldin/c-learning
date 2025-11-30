@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 void strupper(char *s) {
     while (*s) {
@@ -31,6 +32,37 @@ void strcaps(char *s) {
     }
 }
 
+char *strrev(char *s) {
+    int len, i;
+    char *reversed;
+
+    len = 0;
+    while (*s) {
+        len++;
+        s++;
+    }
+
+    reversed = malloc(sizeof(char) * len);
+
+    if (reversed == NULL) {
+        fprintf(stderr, "Unable to allocate memory\n");
+        exit(1);
+    }
+
+    s--;
+    i = 0;
+    while (len) {
+        *(reversed + i) = *s;
+        i++;
+        len--;
+        s--;
+    }
+
+    *(reversed + i) = '\0';
+
+    return reversed;
+}
+
 int main() {
     char string[] = "Random STRING sample 123#@$";
 
@@ -49,6 +81,15 @@ int main() {
     strcaps(new_string);
 
     printf("Capitalized: %s\n", new_string);
+
+    char new_string2[] = "A string dwelling in memory";
+    char *reversed_string;
+
+    reversed_string = strrev(new_string2);
+
+    printf("Before: %s\n", new_string2);
+    printf("After: %s\n", reversed_string);
+
     
     return 0;
 }

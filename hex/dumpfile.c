@@ -13,6 +13,8 @@ int options;
 #define set_oct() options |= OCT
 #define test_oct() ((options & OCT) == OCT)
 
+#define mayor_ver 1
+#define minor_ver 7
 
 void line_out(int offset, int length, unsigned char *data) {
     int a;
@@ -80,6 +82,13 @@ void help(void) {
     exit(1);
 }
 
+void version(void) {
+    puts("dumpfile - output file's raw data");
+    printf("Version %d.%d", mayor_ver, minor_ver);
+
+    exit(1);
+}
+
 int main(int argc, char *argv[]) {
     char *filename = argv[1];
     char bff[256];
@@ -91,7 +100,7 @@ int main(int argc, char *argv[]) {
     }
 
     options = 0;
-    while ((r = getopt(argc, argv, "aosh")) != -1) {
+    while ((r = getopt(argc, argv, "aovsh")) != -1) {
         switch (r)
         {
         case 'a':
@@ -102,6 +111,9 @@ int main(int argc, char *argv[]) {
             break;
         case 'h':
             help();
+            break;
+        case 'v':
+            version();
             break;
         case '?':
             printf("Switch '%c' is invalid\n", r);

@@ -18,11 +18,20 @@ void line_out(int offset, int length, unsigned char *data) {
     int a;
 
     if (!test_abbr()) {
-        printf("%05X ", offset);
+        if (test_oct()) {
+            printf("%05o ", offset);
+        } else {
+            printf("%05X ", offset);
+        }
     }
 
     for (a = 0; a < length; a++) {
-        printf(" %02X", *(data + a));
+        if (test_oct()) {
+            printf(" %03o", *(data + a));
+        } else {
+            printf(" %02X", *(data + a));
+        }
+
 
         if ((a + 1) % 8 == 0 && !test_abbr()) {
             putchar(' ');
@@ -33,7 +42,11 @@ void line_out(int offset, int length, unsigned char *data) {
 
     if (length < BSIZE) {
         for ( ; a <BSIZE; a++) {
-            printf("   ");
+            if (test_oct()) {
+                printf("    ");
+            } else {
+                printf("   ");
+            }
 
             if ((a + 1) % 8 == 0) {
                 putchar(' ');

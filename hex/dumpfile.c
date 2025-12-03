@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define BSIZE 16
 
@@ -18,6 +19,16 @@ void line_out(int offset, int length, unsigned char *data) {
 
     putchar(' ');
 
+    if (length < BSIZE) {
+        for ( ; a <BSIZE; a++) {
+            printf("   ");
+
+            if ((a + 1) % 8 == 0) {
+                putchar(' ');
+            }
+        }
+    }
+
     for (a = 0; a < length; a++) {
         if (*(data + a) >= ' ' && *(data + a) <= '~') {
             putchar(*(data + a));
@@ -30,12 +41,30 @@ void line_out(int offset, int length, unsigned char *data) {
 }
 
 int main(int argc, char *argv[]) {
+    char *filename = argv[1];
+    char bff[256];
+
     if (argc < 2) {
         fprintf(stderr, "Format error: missing dumpfile filename\n");
-        exit(1);
+
+        int result = 0;
+        while (result <= 1) {
+            printf("Enter file name: ");
+            fgets(bff, 256, stdin);
+
+            if (*bff == '\n') {
+                continue;
+            } else {
+                int len = strlen(bff);
+                bff[len - 1] = '\0';
+
+                filename = bff;
+                break;
+            }
+        }
     }
 
-    char *filename = argv[1];;
+    printf("%s\n", filename);
     FILE *fp = fopen(filename, "r");
 
     if (fp == NULL) {

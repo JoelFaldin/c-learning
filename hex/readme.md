@@ -16,3 +16,13 @@ Result:
     Byte 32 bits            4294967296
     Byte 64 bits  18446744073709551616
 ```
+
+2. Details about file (in hex):
+
+```
+gcc hex/dumfile.c
+./a.out .a.out
+```
+
+Result: `A very very long hex output`
+You can also just run `./a.out` and it will prompt for a file. Pass `./.a.out` again and you will get the same result!

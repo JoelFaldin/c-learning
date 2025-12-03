@@ -1,18 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+
+int options;
 
 #define BSIZE 16
+#define ABBR 1
+#define OCT 2
+#define set_abbr() options |= ABBR
+#define test_abbr() ((options & ABBR) == ABBR)
+#define set_oct() options |= OCT
+#define test_oct() ((options & OCT) == OCT)
+
 
 void line_out(int offset, int length, unsigned char *data) {
     int a;
 
-    printf("%05X ", offset);
+    if (!test_abbr()) {
+        printf("%05X ", offset);
+    }
 
     for (a = 0; a < length; a++) {
         printf(" %02X", *(data + a));
 
-        if ((a + 1) % 8 == 0) {
+        if ((a + 1) % 8 == 0 && !test_abbr()) {
             putchar(' ');
         }
     }
@@ -29,42 +41,72 @@ void line_out(int offset, int length, unsigned char *data) {
         }
     }
 
-    for (a = 0; a < length; a++) {
-        if (*(data + a) >= ' ' && *(data + a) <= '~') {
-            putchar(*(data + a));
-        } else {
-            putchar(' ');
+    if (!test_abbr()) {
+        putchar(' ');
+
+        for (a = 0; a < length; a++) {
+            if (*(data + a) >= ' ' && *(data + a) <= '~') {
+                putchar(*(data + a));
+            } else {
+                putchar(' ');
+            }
         }
     }
 
     putchar('\n');
 }
 
+void help(void) {
+    puts("dumpfile - output file's raw data");
+    puts("Format: dumpfile filename [options]");
+    puts("Options:");
+    puts("-a abbreviated output");
+    puts("-o output octal instead of hex");
+    puts("-h display this text");
+    
+    exit(1);
+}
+
 int main(int argc, char *argv[]) {
     char *filename = argv[1];
     char bff[256];
+    int r;
 
     if (argc < 2) {
-        fprintf(stderr, "Format error: missing dumpfile filename\n");
+        puts("Format: dumpfile filename [options]");
+        exit(1);
+    }
 
-        int result = 0;
-        while (result <= 1) {
-            printf("Enter file name: ");
-            fgets(bff, 256, stdin);
-
-            if (*bff == '\n') {
-                continue;
-            } else {
-                int len = strlen(bff);
-                bff[len - 1] = '\0';
-
-                filename = bff;
-                break;
-            }
+    options = 0;
+    while ((r = getopt(argc, argv, "aosh")) != -1) {
+        switch (r)
+        {
+        case 'a':
+            set_abbr();
+            break;
+        case 'o':
+            set_oct();
+            break;
+        case 'h':
+            help();
+            break;
+        case '?':
+            printf("Switch '%c' is invalid\n", r);
+            break;
+        default:
+            puts("Unknown option.");
         }
     }
 
-    printf("%s\n", filename);
+    if (argv[2] != NULL) {
+        filename = argv[2];
+    } else {
+        filename = argv[1];
+    }
+    // printf("Arg 1: %s\n", argv[0]);
+    // printf("Arg 2: %s\n", argv[1]);
+    // printf("Arg 3: %s\n", argv[2]);
+
     FILE *fp = fopen(filename, "r");
 
     if (fp == NULL) {
@@ -72,10 +114,9 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    char buffer[BSIZE];
+    unsigned char buffer[BSIZE];
     int ch, index, offset, length;
 
-    length = BSIZE;
     index = 0;
     offset = 0;
 
@@ -91,11 +132,14 @@ int main(int argc, char *argv[]) {
         }
 
         buffer[index] = ch;
+        // printf("Offset: %d\n", offset);
+        // printf("BSIZE: %d\n", BSIZE);
+        // printf("Buffer: %c\n", buffer[index]);
         index++;
         
-        if (index == length) {
-            line_out(offset, length, buffer);
-            offset += length;
+        if (index == BSIZE) {
+            line_out(offset, BSIZE, buffer);
+            offset += BSIZE;
             index = 0;
         }
     }

@@ -30,6 +30,7 @@ You can also just run `./a.out` and it will prompt for a file. Pass `./.a.out` a
 Additional info:
 - This program accepts flags. Use `-a` for abbreviated output.
 - For outputting help, just run `./a.out -h`. It will output details about program usage.
+- If you run the program with `./a.out -v`, it will output program version.
 - If you run the program with no arguments or flags, it will print basic program usage.
 
 Contents of `hex/file.txt`:

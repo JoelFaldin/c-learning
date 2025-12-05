@@ -3,53 +3,67 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <unistd.h>
+#include <string.h>
 
-int main(int argc, char *argv[]) {
+void dir(const char *dirpath, const char *parentpath) {
     DIR *dp;
     struct dirent *entry;
     struct stat fs;
-    int r;
-    char *dirname, *filename;
+    char subdirpath[BUFSIZ];
 
-    if (argc < 2) {
-        fprintf(stderr, "Missing directory name\n");
-        exit(1);
-    }
-
-    dirname = argv[1];
-    r = chdir(dirname);
-
-    if (r == -1) {
-        fprintf(stderr, "Unable to change to %s\n", dirname);
-        exit(1);
-    }
-
-    dp = opendir(dirname);
-
+    dp = opendir(dirpath);
     if (dp == NULL) {
-        fprintf(stderr, "Unable to read directory %s\n", dirname);
+        fprintf(stderr, "Unable to read directory %s\n", dirpath);
         exit(1);
     }
 
     while ((entry = readdir(dp)) != NULL) {
-        filename = entry -> d_name;
-        r = stat(filename, &fs);
-
-        if (r == -1) {
-            fprintf(stderr, "Error on '%s'\n", filename);
-            exit(1);
+        if (strncmp(entry -> d_name, ".", 1) == 0) {
+            continue;
         }
 
+        stat(entry -> d_name, &fs);
+
         if (S_ISDIR(fs.st_mode)) {
-            if (filename[0] == '.') {
-                continue;
+            if (chdir(entry -> d_name) == -1) {
+                fprintf(stderr, "Unable to change to %s\n");
+                exit(1);
             }
 
-            printf("Found dir: %s\n", filename);
+            getcwd(subdirpath, BUFSIZ);
+            dir(subdirpath, dirpath);
         }
     }
 
     closedir(dp);
+
+    if (chdir(parentpath) == -1) {
+        if (parentpath ==NULL) {
+            return;
+        }
+
+        fprintf(stderr, "Parent dir lost\n");
+        exit(1);
+    }
+}
+
+int main(int argc, char *argv[]) {
+    char current[BUFSIZ];
+
+    if (argc < 2) {
+        getcwd(current, BUFSIZ);
+    } else {
+        strcpy(current, argv[1]);
+
+        if (chdir(current) == -1) {
+            fprintf(stderr, "Unable to access directory %s\n");
+            exit(1);
+        }
+
+        getcwd(current, BUFSIZ);
+    }
+
+    dir(current, NULL);
 
     return 0;
 }

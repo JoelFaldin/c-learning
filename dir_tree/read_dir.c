@@ -1,25 +1,48 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include <sys/stat.h>
+#include <time.h>
 
 int main() {
     DIR *dp;
     struct dirent *entry;
+    struct stat fs;
+    int r;
+    char *filename;
 
-    dp = opendir("./dir_tree");
+    char *dir_add = "./daily_greetings";
+
+    dp = opendir(dir_add);
     if (dp == NULL) {
         puts("Unable to read directory");
         exit(1);
     }
 
     while ((entry = readdir(dp)) != NULL) {
-        printf("File %s\n", entry -> d_name);
+        filename = entry -> d_name;
+
+        char fullpath[128];
+        snprintf(fullpath, sizeof(fullpath), "%s/%s", dir_add, filename);
+        
+        r = stat(fullpath, &fs);
+        
+        if (r == -1) {
+            fprintf(stderr, "Error reading '%s'\n", filename);
+            exit(1);
+        }
+
+        if (S_ISDIR(fs.st_mode)) {
+            printf("Dir %-16s ", filename);
+        } else {
+            printf("File %-16s ", filename);
+        }
+
+        printf("%8lu bytes ", fs.st_size);
+        printf("%s", ctime(&fs.st_atime));
     }
 
-    // puts("Directory is open!");
-
     closedir(dp);
-    // puts("Directory closed!");
 
     return 0;
 }

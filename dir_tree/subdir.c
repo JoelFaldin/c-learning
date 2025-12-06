@@ -5,16 +5,21 @@
 #include <unistd.h>
 #include <string.h>
 
-void dir(const char *dirpath, const char *parentpath) {
+void dir(const char *dirpath, const char *parentpath, int depth) {
     DIR *dp;
     struct dirent *entry;
     struct stat fs;
     char subdirpath[BUFSIZ];
+    int i;
 
     dp = opendir(dirpath);
     if (dp == NULL) {
         fprintf(stderr, "Unable to read directory %s\n", dirpath);
         exit(1);
+    }
+
+    for (i = 0; i < depth; i++) {
+        printf("   ");
     }
 
     while ((entry = readdir(dp)) != NULL) {
@@ -23,6 +28,7 @@ void dir(const char *dirpath, const char *parentpath) {
         }
 
         stat(entry -> d_name, &fs);
+        printf("%s\n", entry -> d_name);
 
         if (S_ISDIR(fs.st_mode)) {
             if (chdir(entry -> d_name) == -1) {
@@ -31,7 +37,7 @@ void dir(const char *dirpath, const char *parentpath) {
             }
 
             getcwd(subdirpath, BUFSIZ);
-            dir(subdirpath, dirpath);
+            dir(subdirpath, dirpath, depth + 1);
         }
     }
 
@@ -63,7 +69,7 @@ int main(int argc, char *argv[]) {
         getcwd(current, BUFSIZ);
     }
 
-    dir(current, NULL);
+    dir(current, NULL, 0);
 
     return 0;
 }

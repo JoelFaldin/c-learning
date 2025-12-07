@@ -34,6 +34,8 @@ int main() {
   if (g != 0) {
     if (g == GLOB_NOMATCH) {
       fprintf(stderr, "No matches for '%s'\n", filename);
+      globfree(&gstruct);
+      return 0;
     } else {
       fprintf(stderr, "Some kinda glob error\n");
       exit(1);

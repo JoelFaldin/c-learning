@@ -5,6 +5,7 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <string.h>
+#include <glob.h>
 
 #ifndef PATH_MAX
 #define PATH_MAX 256
@@ -17,6 +18,9 @@ void find(char *dirpath, char *parentpath, char *match) {
     struct dirent *entry;
     struct stat fs;
     char subdirpath[PATH_MAX];
+    int g;
+    glob_t gstruct;
+    char **found;
 
     dp = opendir(dirpath);
     if (dp == NULL) {
@@ -24,19 +28,25 @@ void find(char *dirpath, char *parentpath, char *match) {
         exit(1);
     }
 
-    while ((entry = readdir(dp)) != NULL) {
-        if (strcmp(entry -> d_name, match) == 0) {
-            printf("%s/%s\n", dirpath, match);
+    g = glob(match, GLOB_ERR, NULL, &gstruct);
+    if (g == 0) {
+        found = gstruct.gl_pathv;
+
+        while (*found) {
+            printf("%s/%s\n", dirpath, *found);
+            found++;
             count++;
         }
+    }
 
+    while ((entry = readdir(dp)) != NULL) {
         stat(entry -> d_name, &fs);
 
         if (S_ISDIR(fs.st_mode)) {
-            if (strncmp(entry -> d_name, ".", 0) == 0) {
+            if (strncmp(entry -> d_name, ".", 1) == 0) {
                 continue;
             }
-
+            
             if (chdir(entry -> d_name) == -1) {
                 fprintf(stderr, "Unable to change to %s\n", entry -> d_name);
                 exit(1);
@@ -56,15 +66,28 @@ void find(char *dirpath, char *parentpath, char *match) {
 
         fprintf(stderr, "Parent dir lost\n");
         exit(1);
-    }   
+    }
 }
 
-int main(int argc, char *argv[]) {
+int main() {
     char current[PATH_MAX];
+    char filename[PATH_MAX];
+    char *r;
 
-    if (argc < 2) {
-        fprintf(stderr, "Format: ff filename\n");
-        exit(1);
+    printf("Filename or wildcard: ");
+    r = fgets(filename, PATH_MAX, stdin);
+
+    if (r == NULL) {
+      exit(1);
+    }
+
+    while (*r != '\0') {
+        if (*r == '\n') {
+            *r = '\0';
+            break;
+        }
+
+        r++;
     }
 
     getcwd(current, PATH_MAX);
@@ -74,9 +97,9 @@ int main(int argc, char *argv[]) {
     }
 
     count = 0;
-    printf("Searching for '%s'\n", argv[1]);
+    printf("Searching for '%s'\n", filename);
 
-    find(current, NULL, argv[1]);
+    find(current, NULL, filename);
 
     printf(" Found %d match", count);
 

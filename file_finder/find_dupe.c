@@ -81,6 +81,7 @@ struct finfo *find(char *dirpath, char *parentpath, struct finfo *f) {
 int main() {
     char startdir[PATH_MAX];
     struct finfo *first, *current, *scan;
+    int found = 0;
 
     first = malloc(sizeof(struct finfo) * 1);
 
@@ -112,14 +113,41 @@ int main() {
             while (scan) {
                 if (strcmp(current -> name, scan -> name) == 0) {
                     current -> repeat++;
+                    found = 1;
                 }
 
                 scan = scan -> next;
             }
 
-            printf("%d: %s/%s (%d)\n", current -> index, current -> path, current -> name, current -> repeat);
+            // printf("%d: %s/%s (%d)\n", current -> index, current -> path, current -> name, current -> repeat);
             current = current -> next;
         }
+    }
+
+    current = first -> next;
+    while (current) {
+        if (current -> index > 0) {
+            if (current -> repeat > 1) {
+                printf("%d duplicates found of %s:\n", current -> repeat, current -> name);
+                printf("%s/%s\n", current -> path, current -> name);
+            }
+
+            scan = current -> next;
+            while (scan) {
+                if (strcmp(scan -> name, current -> name) == 0) {
+                    printf(" %s/%s\n", scan -> path, scan -> name);
+                }
+
+                scan = scan -> next;
+            }
+        }
+
+        current = current -> next;
+    }
+
+    if (!found) {
+        puts("No duplicates found");
+        return 1;
     }
 
     return 0;

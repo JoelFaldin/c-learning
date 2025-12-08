@@ -57,6 +57,7 @@ struct finfo *find(char *dirpath, char *parentpath, struct finfo *f) {
             i = f -> index;
             f = f -> next;
             f -> index = i + 1;
+            f -> repeat = 1;
 
             strcpy(f -> name, entry -> d_name);
             strcpy(f -> path, dirpath);
@@ -107,7 +108,16 @@ int main() {
     current = first -> next;
     while (current) {
         if (current -> index > 0) {
-            printf("%d: %s/%s\n", current -> index, current -> path, current -> name);
+            scan = current -> next;
+            while (scan) {
+                if (strcmp(current -> name, scan -> name) == 0) {
+                    current -> repeat++;
+                }
+
+                scan = scan -> next;
+            }
+
+            printf("%d: %s/%s (%d)\n", current -> index, current -> path, current -> name, current -> repeat);
             current = current -> next;
         }
     }

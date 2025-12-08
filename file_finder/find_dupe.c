@@ -11,20 +11,17 @@
 
 struct finfo {
     int index;
+    int repeat;
     char name[BUFSIZ];
     char path[PATH_MAX];
     struct finfo *next;
 };
 
-void print_struct(struct finfo *f) {
-    printf("%d: %s/%s\n", f -> index, f -> path, f -> name);
-}
-
 struct finfo *find(char *dirpath, char *parentpath, struct finfo *f) {
     DIR *dp;
     struct dirent *entry;
     struct stat fs;
-    char subdirpath[PATH_MAX];
+    char subdirpath[PATH_MAX], fullpath[PATH_MAX];
     int i;
 
     dp = opendir(dirpath);
@@ -34,8 +31,9 @@ struct finfo *find(char *dirpath, char *parentpath, struct finfo *f) {
     }
 
     while ((entry = readdir(dp)) != NULL) {
-        stat(entry -> d_name, &fs);
-
+        snprintf(fullpath, PATH_MAX, "%s/%s", dirpath, entry -> d_name);
+        stat(fullpath, &fs);
+        
         if (S_ISDIR(fs.st_mode)) {
             if (strncmp(entry -> d_name, ".", 1) == 0) {
                 continue;
@@ -50,7 +48,6 @@ struct finfo *find(char *dirpath, char *parentpath, struct finfo *f) {
             f = find(subdirpath, dirpath, f);
         } else {
             f -> next = malloc(sizeof(struct finfo) * 1);
-            print_struct(f);
 
             if (f -> next == NULL) {
                 fprintf(stderr, "Unable to allocate new structure\n");
@@ -67,11 +64,10 @@ struct finfo *find(char *dirpath, char *parentpath, struct finfo *f) {
             f -> next = NULL;
         }
     }
-
     
     if (chdir(parentpath) == -1) {
         if (parentpath == NULL) {
-            exit(1);
+            return f;
         }
 
         fprintf(stderr, "Parent dir lost\n");
@@ -83,7 +79,7 @@ struct finfo *find(char *dirpath, char *parentpath, struct finfo *f) {
 
 int main() {
     char startdir[PATH_MAX];
-    struct finfo *first, *current;
+    struct finfo *first, *current, *scan;
 
     first = malloc(sizeof(struct finfo) * 1);
 
@@ -93,7 +89,6 @@ int main() {
     }
 
     first -> index = 0;
-    // printf("%d\n", first -> index);
 
     strcpy(first -> name, "");
     strcpy(first -> path, "");
@@ -107,9 +102,9 @@ int main() {
         exit(1);
     }
 
-    find(startdir, NULL, first);
-
-    current = first;
+    struct finfo *tail = find(startdir, ".", first);
+    
+    current = first -> next;
     while (current) {
         if (current -> index > 0) {
             printf("%d: %s/%s\n", current -> index, current -> path, current -> name);

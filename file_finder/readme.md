@@ -21,3 +21,14 @@ gcc file_finder/glob.c
 ```
 
 Result: `Filename or wildcard: '*.c'`, and then a list of files that matches the string. It also prints `No matches for '*.c'` if no files are found.
+
+3. Find duplicated files:
+
+```
+gcc file_finder/find_dupe.c
+./a.out
+```
+
+Result: A list of duplicated files in the format of `%d duplicates found of file %s:`.
+```
+```

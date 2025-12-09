@@ -1,11 +1,33 @@
 #include <stdio.h>
 #include <time.h>
 
+#define FRIDAY 5
+#define MONDAY 1
+
 struct holiday {
     int month;
     int day;
+    int wday;
     char *name;
 };
+
+int weekend(int holiday, int mday, int wday) {
+    if (mday > holiday - 2 && mday < holiday + 2) {
+        if (mday == holiday - 1 && wday == FRIDAY) {
+            return 2;
+        }
+
+        if (mday == holiday + 1 && wday == MONDAY) {
+            return 2;
+        }
+
+        if (mday == holiday) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
 
 int is_holiday(struct holiday *h) {
     char *n[] = {
@@ -15,30 +37,47 @@ int is_holiday(struct holiday *h) {
         "Veterans Day",
         "Christmas"
     };
+    // printf("Day: %d, month: %d\n", h -> day, h -> month);
 
-    if (h -> month == 0 && h -> day == 1) {
-        h -> name = n[0];
-        return 1;
-    }
-
-    if (h -> month == 5 && h -> day == 19) {
-        h -> name = n[1];
-        return 1;
-    }
-
-    if (h -> month == 6 && h -> day == 4) {
-        h -> name = n[2];
-        return 1;
-    }
-
-    if (h -> month == 10 && h -> day == 11) {
-        h -> name = n[3];
-        return 1;
-    }
-
-    if (h -> month == 11 && h -> day == 25) {
-        h -> name = n[4];
-        return 1;
+    int w = 0;
+    switch (h -> month) {
+    case 1:
+        w = weekend(1, h -> day, h -> wday);
+        if (w) {
+            h -> name = n[0];
+            return w;
+        }
+        break;
+    case 6:
+        w = weekend(19, h -> day, h -> wday);
+        if (w) {
+            h -> name = n[1];
+            return w;
+        }
+        break;
+    case 7:
+        w = weekend(4, h -> day, h -> wday);
+        if (w) {
+            h -> name = n[2];
+            return 2;
+        }
+        break;
+    case 11:
+        w = weekend(11, h -> day, h -> wday);
+        if (w) {
+            h -> name = n[3];
+            return w;
+        }
+        break;
+    case 12:
+        w = weekend(25, h -> day, h -> wday);
+        if (w) {
+            h -> name = n[4];
+            return w;
+        }
+        break;
+    default:
+        break;
     }
 
     return 0;
@@ -57,6 +96,7 @@ int main() {
 
     date.day = today -> tm_mday;
     date.month = today -> tm_mon + 1;
+    date.wday = today -> tm_wday;
 
     // printf("Today is %02d/%02d/%04d", today -> tm_mday, today -> tm_mon + 1, today -> tm_year + 1900);
     printf("Today is %02d/%02d/%04d", date.day, date.month, today -> tm_year + 1900);
@@ -65,8 +105,10 @@ int main() {
 
     if (is_h == 0) {
         printf(", not a holiday\n");
-    } else {
+    } else if (is_h == 1) {
         printf(", %s!\n", date.name);
+    } else if (is_h == 2) {
+        printf(", %s observed\n", date.wday);
     }
 
     return 0;

@@ -4,6 +4,14 @@
 #define FRIDAY 5
 #define MONDAY 1
 
+#define FRIDAY 5
+#define THURSDAY 4
+#define FIRST_WEEK h -> day < 8
+#define SECOND_WEEK h -> day > 7 && h -> day < 15
+#define THIRD_WEEK h -> day > 14 && h -> day < 22
+#define FOURTH_WEEK h -> day > 21 && h -> day < 29
+#define LAST_WEEK h -> day > 24 && h -> day < 32
+
 struct holiday {
     int month;
     int day;
@@ -32,52 +40,102 @@ int weekend(int holiday, int mday, int wday) {
 int is_holiday(struct holiday *h) {
     char *n[] = {
         "New Years Day",
+        "Martin Luther King Day",
+        "Presidents Day",
+        "Memorial Day",
         "Juneteenth",
         "Independence Day",
+        "Labor Day",
+        "Columbus Day",
         "Veterans Day",
+        "Thanksgiving",
         "Christmas"
     };
     // printf("Day: %d, month: %d\n", h -> day, h -> month);
 
-    int w = 0;
-    switch (h -> month) {
-    case 1:
-        w = weekend(1, h -> day, h -> wday);
-        if (w) {
-            h -> name = n[0];
-            return w;
-        }
-        break;
-    case 6:
-        w = weekend(19, h -> day, h -> wday);
-        if (w) {
+    int r = 0;
+
+    if (h -> month == 11 && h -> day == 31 && h -> wday == FRIDAY) {
+        h -> name = n[0];
+        return 2;
+    }
+    if (h -> month == 0 && h -> day == 1) {
+        h -> name = n[0];
+        return 1;
+    }
+    if (h -> month == 0 && h -> day == 2 && h -> wday == MONDAY) {
+        h -> name = n[0];
+        return 2;
+    }
+
+    if (h -> month == 0 && h -> wday == MONDAY) {
+        if (THIRD_WEEK) {
             h -> name = n[1];
-            return w;
+            return 1;
         }
-        break;
-    case 7:
-        w = weekend(4, h -> day, h -> wday);
-        if (w) {
+    }
+
+    if (h -> month == 1 && h -> wday == MONDAY) {
+        if (THIRD_WEEK) {
             h -> name = n[2];
-            return 2;
+            return 1;
         }
-        break;
-    case 11:
-        w = weekend(11, h -> day, h -> wday);
-        if (w) {
+    }
+
+    if (h -> month == 4 && h -> wday == MONDAY) {
+        if (LAST_WEEK) {
             h -> name = n[3];
-            return w;
+            return 1;
         }
-        break;
-    case 12:
-        w = weekend(25, h -> day, h -> wday);
-        if (w) {
-            h -> name = n[4];
-            return w;
+    }
+
+    if (h -> month == 5) {
+        r = weekend(19, h -> day, h -> wday);
+        h -> name = n[4];
+        return r;
+    }
+
+    if (h -> month == 6) {
+        r = weekend(4, h -> day, h -> wday);
+        h -> name = n[5];
+        return r;
+    }
+
+    if (h -> month == 8 && h -> wday == MONDAY) {
+        if (FIRST_WEEK) {
+            h -> name = n[6];
+            return 1;
         }
-        break;
-    default:
-        break;
+    }
+    if (h -> month == 9 && h -> wday == MONDAY) {
+        if (SECOND_WEEK) {
+            h -> name = n[7];
+            return 1;
+        }
+    }
+
+    if (h -> month == 10) {
+        if (h -> wday == THURSDAY && FOURTH_WEEK) {
+            h -> name = n[9];
+            return 1;
+        }
+
+        r = weekend(11, h -> day, h -> wday);
+        h -> name = n[8];
+        return r;
+    }
+
+    if (h -> month == 10 && h -> wday == THURSDAY) {
+        if (FOURTH_WEEK) {
+            h -> name = n[9];
+            return 1;
+        }
+    }
+
+    if (h -> month == 11) {
+        r = weekend(25, h -> day, h -> wday);
+        h -> name = n[10];
+        return r;
     }
 
     return 0;

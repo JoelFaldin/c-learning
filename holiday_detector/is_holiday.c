@@ -177,6 +177,7 @@ int is_holiday(struct holiday *h) {
     return 0;
 }
 
+#ifdef TEST_MAIN
 int main() {
     time_t now;
     struct tm *today;
@@ -208,3 +209,4 @@ int main() {
 
     return 0;
 }
+#endif

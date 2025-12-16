@@ -55,4 +55,4 @@ gcc ./calendar/month.c
 ./a.out
 ```
 
-Result: A nicely formatted grid of december 2025, highlighting current day.
+Result: A nicely formatted grid of the current date, highlighting current day.

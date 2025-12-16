@@ -1,6 +1,24 @@
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 #include "functions.h"
+
+void center(char *text, int width) {
+    int len, x;
+    len = strlen(text);
+
+    for (x = 0; x < width; x++) {
+        printf(" ");
+    }
+
+    printf("%s", text);
+
+    for (x = 0; x < width; x++) {
+        printf(" ");
+    }
+
+    putchar('\n');
+}
 
 int main() {
     const char *months[] = {
@@ -12,6 +30,7 @@ int main() {
     time_t now;
     struct tm *date;
     int month, today, weekday, year, first, day, d;
+    char buffer[50];
 
     time(&now);
     date = localtime(&now);
@@ -23,7 +42,9 @@ int main() {
     mdays[1] = february(year);
     first = the_first(weekday, today);
 
-    printf("%s %d\n", months[month], year);
+    sprintf(buffer, "%s %d", months[month], year);
+
+    center(buffer, 7);
     printf("Sun Mon Tue Wed Thu Fri Sat\n");
 
     day = 1;

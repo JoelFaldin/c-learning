@@ -38,3 +38,12 @@ gcc ./calendar/timezone.c
 ```
 
 Result: Correctly formatted time from the epoch depending on the system's timezone.
+
+5. Get current week:
+
+```
+gcc ./calendar/week.c
+./a.out
+```
+
+Result: A nicely formatted current week and day.

@@ -11,3 +11,15 @@ int february(int year) {
 
     return 29;
 }
+
+int the_first(int wday, int mday) {
+    int first;
+
+    first = wday - (mday % 7) + 1;
+
+    if (first < 0) {
+        first += 7;
+    }
+
+    return first;
+}

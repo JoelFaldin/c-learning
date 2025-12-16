@@ -47,3 +47,12 @@ gcc ./calendar/week.c
 ```
 
 Result: A nicely formatted current week and day.
+
+6. Print current month:
+
+```
+gcc ./calendar/month.c
+./a.out
+```
+
+Result: A nicely formatted grid of december 2025, highlighting current day.

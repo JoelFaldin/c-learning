@@ -4,23 +4,6 @@
 #include <stdlib.h>
 #include "functions.h"
 
-void center(char *text, int width) {
-    int len, x;
-    len = strlen(text);
-
-    for (x = 0; x < width; x++) {
-        printf(" ");
-    }
-
-    printf("%s", text);
-
-    for (x = 0; x < width; x++) {
-        printf(" ");
-    }
-
-    putchar('\n');
-}
-
 int main(int argc, char *argv[]) {
     const char *months[] = {
         "January", "February", "March", "April",

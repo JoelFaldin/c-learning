@@ -66,3 +66,12 @@ gcc ./calendar/month.c
 
 Format: `./a.out [month] [day] [year]`
 Result: A nicely formatted grid of the indicated date, highlighting the day.
+
+8. Print full 2025 year:
+
+```
+gcc ./calendar/year.c
+./a.out
+```
+
+Result: All the months from 2025, nicely formatted.

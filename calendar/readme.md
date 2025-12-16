@@ -56,3 +56,13 @@ gcc ./calendar/month.c
 ```
 
 Result: A nicely formatted grid of the current date, highlighting current day.
+
+7. Print custom month
+
+```
+gcc ./calendar/month.c
+./a.out 12 1 2025
+```
+
+Format: `./a.out [month] [day] [year]`
+Result: A nicely formatted grid of the indicated date, highlighting the day.

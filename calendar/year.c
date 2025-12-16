@@ -4,7 +4,7 @@
 #include <string.h>
 #include "functions.h"
 
-int main() {
+int main(int argc, char *argv[]) {
     const char *months[] = {
         "January", "February", "March", "April",
         "May", "June", "July", "August",
@@ -17,7 +17,14 @@ int main() {
     const int output_width = 27;
     char title[output_width];
 
-    date.tm_year = 2026 - 1900;
+    if (argc == 2) {
+        char *endptr;
+
+        date.tm_year = strtol(argv[1], &endptr, 10) - 1900 + 1;
+    } else {
+        date.tm_year = 2026 - 1900;
+    }
+
     date.tm_mon = 0;
     date.tm_mday = 1;
     date.tm_hour = 0;

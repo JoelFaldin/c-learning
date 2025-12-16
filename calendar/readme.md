@@ -20,3 +20,21 @@ gcc ./calendar/weekday.c
 
 Function format: `.a/.out [month] [day] [year]`
 Result: `The day [month] [day number], [year] is a [day of the week]`
+
+3. Print leap years
+
+```
+gcc ./calendar/leap_years.c
+./a.out
+```
+
+Result: A list with all the years from 1584 to 2101 that are leap years.
+
+4. Timezone
+
+```
+gcc ./calendar/timezone.c
+./a.out
+```
+
+Result: Correctly formatted time from the epoch depending on the system's timezone.

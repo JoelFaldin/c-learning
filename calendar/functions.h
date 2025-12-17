@@ -42,18 +42,28 @@ int day_of_the_week(int m, int d, int y) {
 
 // Center text with a desired width.
 void center(char *text, int width) {
-    int len, x;
-    len = strlen(text);
+    int s, length, indent;
+    length = strlen(text);
 
-    for (x = 0; x < width; x++) {
-        printf(" ");
+    if (length < width) {
+        indent = (width - length) / 2;
+
+        for (s = 0; s < indent; s++) {
+            putchar(' ');
+        }
+
+        while (*text) {
+            putchar(*text);
+            text++;
+            s++;
+        }
+
+        for (; s < width; s++) {
+            putchar(' ');
+        }
+    } else {
+        for (s = 0; s < width; s++) {
+            putchar(*text++);
+        }
     }
-
-    printf("%s", text);
-
-    for (x = 0; x < width; x++) {
-        printf(" ");
-    }
-
-    putchar('\n');
 }

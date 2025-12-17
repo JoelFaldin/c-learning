@@ -4,6 +4,8 @@
 #include <string.h>
 #include "functions.h"
 
+#define COLUMNS 3
+
 int main(int argc, char *argv[]) {
     const char *months[] = {
         "January", "February", "March", "April",
@@ -13,7 +15,7 @@ int main(int argc, char *argv[]) {
     int mdays[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     struct tm date;
 
-    int month, weekday, year, day, dow;
+    int month, weekday, year, day, dow, c, dotm[12], week;
     const int output_width = 27;
     char title[output_width];
 
@@ -39,36 +41,61 @@ int main(int argc, char *argv[]) {
     year = date.tm_year + 1900;
     mdays[1] = february(year);
 
+    dotm[0] = weekday;
+    for (month = 1; month < 12; month++) {
+        dotm[month] = (mdays[month - 1] + dotm[month - 1]) % 7;
+    }
+
     dow = 0;
-    for (month = 0; month < 12; month++) {
-        sprintf(title, "%s %d", months[month], year);
-        center(title, 7);
-        printf("Sun Mon Tue Wed Thu Fri Sat\n");
-
-        day = 1;
-        while (day <= mdays[month]) {
-            if (dow < weekday && day == 1) {
-                printf("    ");
-                dow++;
-            } else {
-                printf(" %2d ", day);
-                dow++;
-
-                if (dow > 6) {
-                    dow = 0;
-                    putchar('\n');
-                }
-
-                day++;
-                if (day > mdays[month]) {
-                    break;
-                }
-            }
+    for (month = 0; month < 12; month += COLUMNS) {
+        for (c = 0; c < COLUMNS; c++) {
+            sprintf(title, "%s %d", months[month + c], year);
+            center(title, output_width);
+            printf("   ");
+        }
+        
+        putchar('\n');
+        
+        for (c = 0; c < COLUMNS; c++) {
+            printf("Sun Mon Tue Wed Thu Fri Sat    ");
         }
 
-        weekday = dow;
-        dow = 0;
-        printf("\n\n");
+        for (c = 0; c < COLUMNS; c++) {
+            day = 1;
+            for (dow = 0; dow < 7; dow++) {
+                if (dow == dotm[month + c]) {
+                    printf("    ");
+                } else {
+                    printf(" %2d ", day);
+                    day++;
+                }
+            }
+
+            printf("    ");
+            dotm[month + c] = day;
+        }
+
+        for (week = 1; week < 6; week++) {
+            for (c = 0; c < COLUMNS; c++) {
+                day = dotm[month + c];
+                for (dow = 0; dow < 7; dow++) {
+                    if (day <= mdays[month + c]) {
+                        printf(" %2d ", day);
+                    } else {
+                        printf("    ");
+                    }
+
+                    day++;
+                }
+
+                printf("    ");
+                dotm[month + c] = day;
+            }
+
+            putchar('\n');
+        }
+
+        putchar('\n');
     }
 
     return 0;

@@ -75,3 +75,12 @@ gcc ./calendar/year.c
 ```
 
 Result: All the months from 2025, nicely formatted.
+
+9. Terminal styles/colors
+
+```
+gcc ./calendar/ansi.c
+./a.out
+```
+
+Result: Different lines with styles and colors.

@@ -3,7 +3,7 @@
 #include <time.h>
 #include <string.h>
 
-#include "functions.h"
+#include "helpers.h"
 #include "holiday_year.h"
 
 #define COLUMNS 3

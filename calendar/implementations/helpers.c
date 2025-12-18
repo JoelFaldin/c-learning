@@ -1,3 +1,8 @@
+#include <string.h>
+#include <stdio.h>
+
+#include "helpers.h"
+
 // Returns the number of days of February, depending of the year.
 int february(int year) {
     if (year % 400 == 0) {

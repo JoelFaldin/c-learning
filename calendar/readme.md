@@ -67,13 +67,15 @@ gcc ./calendar/month.c
 Format: `./a.out [month] [day] [year]`
 Result: A nicely formatted grid of the indicated date, highlighting the day.
 
-8. Print full 2025 year:
+8. Print full 2025 (or custom) year:
+This program was refactored to print multiple rows of 3 columns each, representing each month. It uses terminal colors to highligth the current day and the holidays of the year.
 
 ```
-gcc ./calendar/year.c
+gcc -I./calendar/declarations ./calendar/implementations/*.c ./calendar/year.c -lm
 ./a.out
 ```
 
+Format: `./a.out [year]`
 Result: All the months from 2025, nicely formatted.
 
 9. Terminal styles/colors

@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+
 #include "functions.h"
+#include "holiday_year.h"
 
 #define COLUMNS 3
 
@@ -10,6 +12,7 @@
 #define BLACK 0
 #define CYAN 6
 #define WHITE 7
+#define RED 1
 #define FG 30
 #define BG 40
 
@@ -21,6 +24,14 @@ void color_output(int d) {
     }
 }
 
+void color_holiday(int d) {
+    printf("\x1b[%d;%dm%2d", FG + WHITE, BG + RED, d);
+}
+
+void color_today(int d) {
+    printf("\x1b[%d;%dm%2d", FG + BLACK, BG + WHITE, d);
+}
+
 int main(int argc, char *argv[]) {
     const char *months[] = {
         "Jan", "Feb", "March", "April",
@@ -29,6 +40,12 @@ int main(int argc, char *argv[]) {
     };
     int mdays[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     struct tm date;
+    struct holiday h;
+
+    time_t now;
+    struct tm *p_date;
+    time(&now);
+    p_date = localtime(&now);
 
     int month, weekday, year, day, dow, c, dotm[12], week;
     const int output_width = 15;
@@ -86,15 +103,29 @@ int main(int argc, char *argv[]) {
 
         // First week loop:
         for (c = 0; c < COLUMNS; c++) {
+            h.month = (month + c);
+            h.year = year;
+            h.name = NULL;
+
             day = 1;
             for (dow = 0; dow < 7; dow++) {
                 if (dow < dotm[month + c]) {
                     printf("  ");
-                } else if (day <= mdays[month + c]) {
-                    color_output(day);
-                    day++;
                 } else {
-                    printf("  ");
+                    h.day = day;
+                    h.wday = dow;
+                    if (is_holiday(&h) == 1) {
+                        color_holiday(day);
+                    } else if (p_date -> tm_year + 1900 == year &&
+                        p_date -> tm_mon == month + c &&
+                        p_date -> tm_mday == day
+                    ) {
+                        color_today(day);
+                    } else {
+                        color_output(day);
+                    }
+
+                    day++;
                 }
             }
 
@@ -109,7 +140,19 @@ int main(int argc, char *argv[]) {
                 day = dotm[month + c];
                 for (dow = 0; dow < 7; dow++) {
                     if (day <= mdays[month + c]) {
-                        color_output(day);
+                        h.day = day;
+                        h.wday = dow;
+
+                        if (is_holiday(&h) == 1) {
+                            color_holiday(day);
+                        } else if (p_date -> tm_year + 1900 == year &&
+                            p_date -> tm_mon == month + c &&
+                            p_date -> tm_mday == day
+                        ) {
+                            color_today(day);
+                        } else {
+                            color_output(day);
+                        }
                     } else {
                         printf("  ");
                     }
@@ -123,8 +166,6 @@ int main(int argc, char *argv[]) {
 
             putchar('\n');
         }
-
-        putchar('\n');
     }
 
     return 0;

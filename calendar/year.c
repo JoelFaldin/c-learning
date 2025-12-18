@@ -6,25 +6,40 @@
 
 #define COLUMNS 3
 
+#define BOLD 1
+#define BLACK 0
+#define CYAN 6
+#define WHITE 7
+#define FG 30
+#define BG 40
+
+void color_output(int d) {
+    if (d % 2) {
+        printf("\x1b[%d;m%2d", FG + WHITE, d);
+    } else {
+        printf("\x1b[%d;m%2d", FG + CYAN, d);
+    }
+}
+
 int main(int argc, char *argv[]) {
     const char *months[] = {
-        "January", "February", "March", "April",
-        "May", "June", "July", "August",
-        "September", "October", "November", "December"
+        "Jan", "Feb", "March", "April",
+        "May", "June", "July", "Aug",
+        "Sep", "Oct", "Nov", "Dec"
     };
     int mdays[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     struct tm date;
 
     int month, weekday, year, day, dow, c, dotm[12], week;
-    const int output_width = 27;
+    const int output_width = 15;
     char title[output_width];
 
     if (argc == 2) {
         char *endptr;
 
-        date.tm_year = strtol(argv[1], &endptr, 10) - 1900 + 1;
+        date.tm_year = strtol(argv[1], &endptr, 10) - 1900;
     } else {
-        date.tm_year = 2026 - 1900;
+        date.tm_year = 2025 - 1900;
     }
 
     date.tm_mon = 0;
@@ -38,7 +53,7 @@ int main(int argc, char *argv[]) {
     mktime(&date);
 
     weekday = date.tm_wday;
-    year = date.tm_year + 1900;
+    year = date.tm_year + 1900 + 1;
     mdays[1] = february(year);
 
     dotm[0] = weekday;
@@ -51,44 +66,58 @@ int main(int argc, char *argv[]) {
         for (c = 0; c < COLUMNS; c++) {
             sprintf(title, "%s %d", months[month + c], year);
             center(title, output_width);
-            printf("   ");
+            printf("  ");
         }
         
         putchar('\n');
         
         for (c = 0; c < COLUMNS; c++) {
-            printf("Sun Mon Tue Wed Thu Fri Sat    ");
+            printf("\x1b[%dm%s", BOLD, "Su");
+            printf("\x1b[0m%s", "Mo");
+            printf("\x1b[%dm%s", BOLD, "Tu");
+            printf("\x1b[0m%s", "We");
+            printf("\x1b[%dm%s", BOLD, "Th");
+            printf("\x1b[0m%s", "Fi");
+            printf("\x1b[%dm%s", BOLD, "Sa");
+            printf("\x1b[0m  ");
         }
 
+        putchar('\n');
+
+        // First week loop:
         for (c = 0; c < COLUMNS; c++) {
             day = 1;
             for (dow = 0; dow < 7; dow++) {
-                if (dow == dotm[month + c]) {
-                    printf("    ");
-                } else {
-                    printf(" %2d ", day);
+                if (dow < dotm[month + c]) {
+                    printf("  ");
+                } else if (day <= mdays[month + c]) {
+                    color_output(day);
                     day++;
+                } else {
+                    printf("  ");
                 }
             }
 
-            printf("    ");
+            printf("  ");
             dotm[month + c] = day;
         }
+
+        putchar('\n');
 
         for (week = 1; week < 6; week++) {
             for (c = 0; c < COLUMNS; c++) {
                 day = dotm[month + c];
                 for (dow = 0; dow < 7; dow++) {
                     if (day <= mdays[month + c]) {
-                        printf(" %2d ", day);
+                        color_output(day);
                     } else {
-                        printf("    ");
+                        printf("  ");
                     }
 
                     day++;
                 }
 
-                printf("    ");
+                printf("  ");
                 dotm[month + c] = day;
             }
 

@@ -14,5 +14,18 @@ int main() {
     printf("%sBlinking text%s\n", BLINK, RESET);
     printf("%sInverse text%s\n", INVERSE, RESET);
 
+    printf("-------------");
+    putchar('\n');
+
+    int f, b;
+
+    for (f = 0; f < 8; f++) {
+        for (b = 0; b < 8; b++) {
+            printf("\x1b[%d;%dm %d:%d ", f + 30, b + 40, f + 30, b + 40);
+        }
+
+        printf("\x1b[0m\n");
+    }
+
     return 0;
 }

@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #define TL *(g + 0)
 #define TC *(g + 1)
@@ -103,8 +105,22 @@ int winner(int *g) {
     return 0;
 }
 
+int computer(int *g) {
+    int r;
+
+    do {
+        r = rand() % 9;
+    } while (*(g + r) != 0);
+
+    r++;
+
+    printf("The computer moves to square %d\n", r);
+    return r;
+}
+
 int main() {
-    int ply, p;
+    srand((unsigned)time(NULL));
+    int ply, p, players;
 
     int grid[] = {
         0, 0, 0,
@@ -113,12 +129,28 @@ int main() {
     };
 
     puts("Tic-Tac-Toe");
+    printf("Number of players (0, 1, 2): ");
+    scanf("%d", &players);
+
+    if (players < 0 || players > 2) {
+        return 1;
+    }
 
     ply = 0;
     while (ply < 9) {
         showgrid(grid);
 
-        while ((p = prompt(ply, grid)) == -1);
+        if (players == 0) {
+            p = computer(grid);
+        } else if (players == 1) {
+            if (ply % 2) {
+                p = computer(grid);
+            } else {
+                while ((p = prompt(ply, grid)) == -1);
+            }
+        } else {
+            while ((p = prompt(ply, grid)) == -1);
+        }
 
         if (p == 0) {
             break;
@@ -131,6 +163,11 @@ int main() {
         }
 
         ply++;
+    }
+
+    if (ply == 9) {
+        showgrid(grid);
+        puts("Cat's game!");
     }
 
     return 0;

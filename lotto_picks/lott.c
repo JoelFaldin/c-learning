@@ -2,39 +2,84 @@
 #include <stdlib.h>
 #include <time.h>
 
-int main() {
-    const int balls = 69, draw = 5;
-    int x, r, count;
-    int winners[balls];
+#define BALLS 69
+#define DRAW 5
 
-    srand((unsigned)time(NULL));
+void lotto(int *a) {
+    int numbers[BALLS];
+    int x, y, r;
 
-    printf("Drawing %d numbers from %d balls:\n", draw, balls);
-
-    for (x = 0; x < balls; x++) {
-        winners[x] = 0;
+    for (x = 0; x < BALLS; x++) {
+        numbers[x] = 0;
     }
 
-    for (x = 0; x < draw; x++) {
+    for (x = 0; x < DRAW; x++) {
         do {
-            r = rand() % balls;
-        } while (winners[r] == 1);
-        winners[r] = 1;
+            r = rand() % BALLS;
+        } while (numbers[r] == 1);
+        numbers[r] = 1;
     }
 
-    count = 0;
-    for (x = 0; x < balls; x++) {
-        if (winners[x]) {
-            printf("%d", x + 1);
-            count++;
+    y = 0;
+    for (x = 0; x < BALLS; x++) {
+        if (numbers[x]) {
+            *(a + y) = x;
+            y++;
 
-            if (count < draw) {
-                printf(" - ");
+            if (y == DRAW) {
+                break;
+            }
+        }
+    }
+}
+
+int winner(int *m, int *g) {
+    int x, y, c;
+
+    c = 0;
+    for (x = 0; x < DRAW; x++) {
+        for (y = 0; y < DRAW; y++) {
+            if (*(m + x) == *(g + y)) {
+                c++;
             }
         }
     }
 
+    return 0;
+}
+
+int main() {
+    int x, c;
+    int match[DRAW], guess[DRAW];
+
+    srand((unsigned)time(NULL));
+
+    printf("Trying to match:\t");
+    lotto(match);
+    for (x = 0; x < DRAW; x++) {
+        printf("%d", match[x] + 1);
+
+        if (x < DRAW - 1) {
+            printf(" - ");
+        }
+    }
+
     putchar('\n');
+
+    printf("Your guess:\t\t");
+    lotto(guess);
+    for (x = 0; x < DRAW; x++) {
+        printf("%d", guess[x] + 1);
+
+        if (x < DRAW - 1) {
+            printf(" - ");
+        }
+    }
+
+    putchar('\n');
+
+    c = winner(match, guess);
+    printf("You matched %d numbers\n", c);
 
     return 0;
 }

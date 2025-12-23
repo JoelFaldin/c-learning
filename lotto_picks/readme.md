@@ -20,11 +20,11 @@ gcc ./lotto_picks/random.c
 
 Result: A 5x5 grid of random values in range.
 
-3. Pick random values between 1 and 69:
+3. Pick and compare random values between 1 and 69:
 
 ```
 gcc ./lotto_picks/lott.c
 ./a.out
 ```
 
-Result: 5 dalues in the specified range, no repetition, sorted and nicely formatted.
+Result: 5 values to match, 5 values guessed, and the number of matches between the two.

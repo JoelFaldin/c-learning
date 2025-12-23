@@ -27,4 +27,4 @@ gcc ./lotto_picks/lott.c
 ./a.out
 ```
 
-Result: 5 dalues in the specified range, sorted and nicely formatted.
+Result: 5 dalues in the specified range, no repetition, sorted and nicely formatted.

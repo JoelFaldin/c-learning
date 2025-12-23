@@ -45,12 +45,13 @@ int winner(int *m, int *g) {
         }
     }
 
-    return 0;
+    return c;
 }
 
 int main() {
-    int x, c;
+    int x, c, count;
     int match[DRAW], guess[DRAW];
+    const int tomatch = 2;
 
     srand((unsigned)time(NULL));
 
@@ -58,7 +59,7 @@ int main() {
     lotto(match);
     for (x = 0; x < DRAW; x++) {
         printf("%d", match[x] + 1);
-
+        
         if (x < DRAW - 1) {
             printf(" - ");
         }
@@ -66,8 +67,15 @@ int main() {
 
     putchar('\n');
 
-    printf("Your guess:\t\t");
-    lotto(guess);
+    count = 0;
+    do {
+        lotto(guess);
+        c = winner(match, guess);
+        count++;
+    } while (c < tomatch);
+
+    printf("It took %d times to match %d balls:\n", count, c);
+    
     for (x = 0; x < DRAW; x++) {
         printf("%d", guess[x] + 1);
 
@@ -77,9 +85,6 @@ int main() {
     }
 
     putchar('\n');
-
-    c = winner(match, guess);
-    printf("You matched %d numbers\n", c);
 
     return 0;
 }

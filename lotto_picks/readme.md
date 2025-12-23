@@ -27,4 +27,4 @@ gcc ./lotto_picks/lott.c
 ./a.out
 ```
 
-Result: 5 values to match, 5 values guessed, and the number of matches between the two.
+Result: 5 values to match, 5 values guessed, and the number of times it takes to match 2 balls.

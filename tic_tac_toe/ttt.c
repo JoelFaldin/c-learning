@@ -40,7 +40,23 @@ void showgrid(int *g) {
     }
 }
 
+int prompt(int p) {
+    int square;
+
+    printf("%c's turn: Pick a square, 0 to quit: ", p % 2 ? 'O' : 'X');
+
+    scanf("%d", &square);
+
+    if (square < 0 || square > 9) {
+        return 0;
+    }
+
+    return square;
+}
+
 int main() {
+    int ply, p;
+
     int grid[] = {
         0, 0, 0,
         0, 0, 0,
@@ -49,7 +65,19 @@ int main() {
 
     puts("Tic-Tac-Toe");
 
-    showgrid(grid);
+    ply = 0;
+    while (1) {
+        showgrid(grid);
+
+        p = prompt(ply);
+        if (p == 0) {
+            break;
+        }
+
+        grid[p - 1] = ply % 2 ? -1 : 1;
+        ply++;
+    }
+
 
     return 0;
 }

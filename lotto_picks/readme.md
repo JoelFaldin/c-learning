@@ -19,3 +19,12 @@ gcc ./lotto_picks/random.c
 ```
 
 Result: A 5x5 grid of random values in range.
+
+3. Pick random values between 1 and 69:
+
+```
+gcc ./lotto_picks/lott.c
+./a.out
+```
+
+Result: 5 dalues in the specified range, sorted and nicely formatted.

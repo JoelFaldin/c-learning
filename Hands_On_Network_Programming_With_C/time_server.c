@@ -48,11 +48,6 @@ int main() {
 
     freeaddrinfo(bind_address);
 
-    if (listen(socket_listen, 10) < 0) {
-        fprintf(stderr, "listen() failed. (%d)\n", GETSOCKETERRNO());
-        return 1;
-    }
-
     printf("Listening...\n");
     if (listen(socket_listen, 10) < 0) {
         fprintf(stderr, "listen() failed. (%d)\n", GETSOCKETERRNO());
@@ -82,7 +77,17 @@ int main() {
     char request[1024];
     int bytes_received = recv(socket_client, request, 1024, 0);
 
-    printf("Received %d bytes\n", bytes_received);
+    printf("%.*s\n", bytes_received, request);
+
+    printf("Sending response...\n");
+    const char *response =
+      "HTTP/1.1 200 OK\r\n"
+      "Connection: close\r\n"
+      "Content-Type: text/plain/r/n/r/n"
+      "Local time is: ";
+
+    int bytes_sent = send(socket_client, response, strlen(response), 0);
+    printf("Sent %d of %d bytes.\n", bytes_sent, (int)strlen(response));
 
     return 0;
 }

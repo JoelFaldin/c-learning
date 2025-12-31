@@ -83,11 +83,21 @@ int main() {
     const char *response =
       "HTTP/1.1 200 OK\r\n"
       "Connection: close\r\n"
-      "Content-Type: text/plain/r/n/r/n"
+      "Content-Type: text/plain\r\n\r\n"
       "Local time is: ";
 
     int bytes_sent = send(socket_client, response, strlen(response), 0);
+
+    time_t timer;
+    time(&timer);
+    char *time_msg = ctime(&timer);
+    bytes_sent = send(socket_client, time_msg, strlen(time_msg), 0);
     printf("Sent %d of %d bytes.\n", bytes_sent, (int)strlen(response));
+
+    printf("Closing connection...\n");
+    CLOSESOCKET(socket_client);
+
+    printf("Wallahi im finished ! !\n");
 
     return 0;
 }

@@ -23,7 +23,7 @@ int main() {
     struct addrinfo hints;
     memset(&hints, 0, sizeof(hints));
 
-    hints.ai_family = AF_INET;
+    hints.ai_family = AF_INET6;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
 
@@ -37,6 +37,12 @@ int main() {
 
     if (!ISVALIDSOCKET(socket_listen)) {
         fprintf(stderr, "socket() failed. (%d)\n", GETSOCKETERRNO());
+        return 1;
+    }
+
+    int option = 0;
+    if (setsockopt(socket_listen, IPPROTO_IPV6, IPV6_V6ONLY, (void*)&option, sizeof(option))) {
+        fprintf(stderr, "setsockopt() failed. (%d)\n", GETSOCKETERRNO());
         return 1;
     }
 
@@ -87,12 +93,13 @@ int main() {
       "Local time is: ";
 
     int bytes_sent = send(socket_client, response, strlen(response), 0);
+    printf("Sent %d of %d bytes.\n", bytes_sent, (int)strlen(response));
 
     time_t timer;
     time(&timer);
     char *time_msg = ctime(&timer);
     bytes_sent = send(socket_client, time_msg, strlen(time_msg), 0);
-    printf("Sent %d of %d bytes.\n", bytes_sent, (int)strlen(response));
+    printf("Sent %d of %d bytes.\n", bytes_sent, (int)strlen(time_msg));
 
     printf("Closing connection...\n");
     CLOSESOCKET(socket_client);
